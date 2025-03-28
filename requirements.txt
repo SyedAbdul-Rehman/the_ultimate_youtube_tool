@@ -1,0 +1,9 @@
+pyfiglet
+termcolor
+yt-dlp
+python-vlc
+qrcode
+requests
+keyring
+config
+supabase
