@@ -1,4 +1,5 @@
 import os
+import sys
 import pyfiglet
 from socket import create_connection
 from termcolor import colored
@@ -40,7 +41,7 @@ def handle_authentication():
         elif choice == "4":
             print(colored("Thank you for using The Ultimate Youtube Tool.", "blue"))
             os.system("pause")
-            exit()
+            sys.exit()
         else:
             print(colored("Invalid choice. Please choose again.", "red"))
             
@@ -85,7 +86,7 @@ def main():
             )
         )
         os.system("pause")
-        exit()
+        sys.exit()
 
     # Handle authentication before proceeding
     handle_authentication()
@@ -117,7 +118,7 @@ def main():
             elif choice == "5":
                 print(colored("Thank you for using The Ultimate Youtube Tool.", "blue"))
                 os.system("pause")
-                exit()
+                sys.exit()
             else:
                 print(colored("Invalid choice. Please choose again.", "red"))
     except KeyboardInterrupt:
