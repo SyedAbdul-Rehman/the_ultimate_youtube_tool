@@ -9,7 +9,6 @@ from video_downloader import input_url_for_video
 from qr_code import qr_menu as qr
 from yt_access_control import yt_access_menu as yt_access
 import authentication as auth
-import keyring  # Add this import
 from colorama import init
 init()
 os.system('color')
@@ -87,15 +86,6 @@ def main():
         )
         os.system("pause")
         sys.exit()
-
-    # Handle authentication before proceeding
-    handle_authentication()
-    
-    # Check if user is logged in by checking stored credentials
-    if not keyring.get_password("app", "email"):
-        print(colored("Please login to use the application.", "red"))
-        os.system("pause")
-        return
 
     try:
         while True:
