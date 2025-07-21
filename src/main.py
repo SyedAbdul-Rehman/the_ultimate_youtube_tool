@@ -8,7 +8,6 @@ from audio_player import input_url_for_audio
 from video_downloader import input_url_for_video
 from qr_code import qr_menu as qr
 from yt_access_control import yt_access_menu as yt_access
-import authentication as auth
 from colorama import init
 init()
 os.system('color')
@@ -20,35 +19,11 @@ def check_internet_connection():
     except OSError:
         return False
 
-def handle_authentication():
-    while True:
-        print(colored("\n--------------------------------\n", "yellow"))
-        print(colored("1. Login", "green"))
-        print(colored("2. Sign-up", "green"))
-        print(colored("3. Stop Automatic Logic", "green"))
-        print(colored("4. Exit", "green"))
-        choice = input(colored("Enter your choice: ", "yellow"))
-
-        if choice == "1":
-            result = auth.login()
-            if result:
-                break
-        elif choice == "2":
-            auth.signup()
-        elif choice == "3":
-            auth.logout()
-        elif choice == "4":
-            print(colored("Thank you for using The Ultimate Youtube Tool.", "blue"))
-            os.system("pause")
-            sys.exit()
-        else:
-            print(colored("Invalid choice. Please choose again.", "red"))
-            
 def song_menu():
     try:
         while True:
             print(colored("\n--------------------------------\n", "yellow"))
-            print(colored("1. Sved Songs", "green"))
+            print(colored("1. Saved Songs", "green"))
             print(colored("2. Play a Song from YouTube", "green"))
             print(colored("3. Exit", "green"))
             song_choice = input(colored("Enter your choice: ", "yellow"))
@@ -93,7 +68,7 @@ def main():
             print(colored("Select an option:", "yellow"))
             print(colored("1. Song/Audio Player", "green"))
             print(colored("2. Video/Audio Downloader", "green"))
-            print(colored("3. Youtuebe QR Code Generator", "green"))
+            print(colored("3. YouTube QR Code Generator", "green"))
             print(colored("4. Block or Unblock YouTube", "green"))
             print(colored("5. Exit", "green"))
             choice = input(colored("Enter your choice: ", "yellow"))
