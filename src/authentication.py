@@ -1,6 +1,3 @@
-from config import supabase
-import keyring
-
 def is_email_registered(email):
     """Check if an email is already registered in the users table."""
     try:
