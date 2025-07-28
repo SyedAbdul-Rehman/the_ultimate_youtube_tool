@@ -7,8 +7,14 @@ from termcolor import colored  # Add termcolor import
 
 
 # Function to fetch the audio URL of a YouTube video
-# In get_audio_url function
 def get_audio_url(youtube_url):
+    """
+    Fetches the direct audio URL of a YouTube video.
+    Args:
+        youtube_url (str): The URL of the YouTube video.
+    Returns:
+        str: The direct audio URL, or None if fetching fails.
+    """
     try:
         print(colored("\nFetching Audio...", "cyan"))
         print(colored("\nWait a second (Depend on your internet)...\n", "yellow"))
