@@ -140,11 +140,13 @@ def list_of_songs():
                 print(
                     colored("\nInvalid choice... Please choose from the list.", "red")
                 )
-                print(colored("Wait for 2 seconds and try again...", "yellow"))
+                time.sleep(2)
         except ValueError:
             print(colored("Invalid input. Please enter a number.", "red"))
+            time.sleep(2)
         except Exception as e:
             print(colored(f"Unexpected error: {e}", "red"))
+            time.sleep(2)
 
 
 # Function to play a song
