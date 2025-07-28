@@ -20,10 +20,10 @@ def save_song():
         pass
 
     name = input(colored("Enter name of song: ", "green"))
+    url = input(colored("Enter url of song: ", "green"))
     if name == "" or url == "":
         print(colored("Enter a Valid Name and URL..", "red"))
         return
-    url = input(colored("Enter url of song: ", "green"))
     if ap.is_youtube_url(url):
         song = {"name": name, "url": url}
         user_data.append(song)
