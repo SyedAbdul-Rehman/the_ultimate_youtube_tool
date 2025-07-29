@@ -196,7 +196,7 @@ def main():
                 list_of_songs()  # Show the list of pre-defined songs
             elif choice == 2:
                 os.system("cls")  # Clear the screen
-                input_url()  # Play the user's custom song
+                input_url_for_audio()  # Play the user's custom song
             elif choice == 3:
                 # Exit the program
                 print(
@@ -210,12 +210,10 @@ def main():
                         "\nInvalid choice... Please choose from the options.", "red"
                     )
                 )
-                print(colored("Wait for 2 seconds and try again...", "yellow"))
                 time.sleep(2)
         except ValueError:
             # Handle invalid input when the user enters something that's not a number
             print(colored("Invalid input. Please enter a valid number.", "red"))
-            print(colored("Wait for 2 seconds and try again...", "yellow"))
             time.sleep(2)
         except Exception as e:
             print(colored(f"Unexpected error: {e}", "red"))
