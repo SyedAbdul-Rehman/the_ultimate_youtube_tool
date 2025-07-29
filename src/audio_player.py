@@ -45,9 +45,13 @@ def get_audio_url(youtube_url):
     return None
 
 
-# Function to play a song
 # Function to play a song with volume control
 def play_song(song):
+    """
+    Plays a song from a given YouTube URL with volume control.
+    Args:
+        song (str): The YouTube URL of the song to play.
+    """
     try:
         print(colored("\nStarting the audio...", "green"))
         url = get_audio_url(song)  # Fetch the audio URL
