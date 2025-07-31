@@ -40,7 +40,7 @@ def view_songs():
             songs = json.load(file)
             print(colored("Saved Songs:", "red"))
             for i, song in enumerate(songs, start=1):
-                print(f"{i}. {song['name']}")
+                print(colored(f"{i}. {song['name']}", "cyan"))
     except FileNotFoundError:
         print(colored("No songs saved yet.", "yellow"))
 
@@ -51,7 +51,7 @@ def remove_song():
             songs = json.load(file)
             print(colored("Saved Songs:", "red"))
             for i, song in enumerate(songs, start=1):
-                print(f"{i}. {song['name']}")
+                print(colored(f"{i}. {song['name']}", "cyan"))
 
             song_number = int(
                 input(colored("Enter the number of the song to remove: ", "green"))
@@ -71,7 +71,7 @@ def song_player_menu(songs):
     while True:
         print(colored("\nChoose a song to play:", "green"))
         for i, song in enumerate(songs, start=1):
-            print(f"{i}. {song['name']}")
+            print(colored(f"{i}. {song['name']}", "cyan"))
         song_choice = input(
             colored(
                 "Enter the number of the song (or type 'exit' to go back): ", "green"

@@ -8,7 +8,16 @@ from termcolor import colored  # Import the colored function from termcolor for 
 
 
 def terminal_color(color, is_background=False):
-    # Map color names to ANSI escape codes for terminal output
+    """
+    Maps color names to ANSI escape codes for terminal output.
+
+    Args:
+        color (str): The name of the color (e.g., "black", "red").
+        is_background (bool): True if the color is for the background, False for foreground.
+
+    Returns:
+        str: The ANSI escape code for the specified color.
+    """
     color_map = {
         "black": 40 if is_background else 30,
         "red": 41 if is_background else 31,
@@ -20,114 +29,130 @@ def terminal_color(color, is_background=False):
         "white": 47 if is_background else 37,
         "reset": 0,
     }
-    # Return the ANSI escape code for the specified color
     return f"\033[{color_map.get(color.lower(), 0)}m"
 
 
 def fetch_random_joke():
+    """
+    Fetches a random joke from the icanhazdadjoke.com API.
+
+    Returns:
+        str: A random joke, or a default joke if fetching fails.
+    """
     try:
-        # Set headers to accept JSON response
         headers = {"Accept": "application/json"}
-        # Make a GET request to fetch a random joke
         response = requests.get("https://icanhazdadjoke.com/", headers=headers)
-        # Raise an error if the response status is not OK
         response.raise_for_status()
-        # Parse the JSON response
         data = response.json()
-        # Return the joke from the response data
         return data.get("joke", "No joke found.")
     except requests.RequestException as e:
-        # Print an error message if the request fails
         print(f"An error occurred while fetching the joke: {e}")
-        # Return a default joke in case of an error
         return "Why don't scientists trust atoms? Because they make up everything!"
 
 
 def generate_qr_terminal(
     data, box_size=1, border=1, fill_color="black", back_color="white"
 ):
-    # Clear the terminal screen
+    """
+    Generates and displays a QR code in the terminal.
+
+    Args:
+        data (str): The data to encode in the QR code.
+        box_size (int): The size of each box (pixel) in the QR code.
+        border (int): The thickness of the border around the QR code.
+        fill_color (str): The fill color for the QR code (e.g., "black", "blue").
+        back_color (str): The background color for the QR code (e.g., "white", "yellow").
+
+    Returns:
+        qrcode.QRCode: The QRCode object if successful, None otherwise.
+    """
     os.system("cls" if os.name == "nt" else "clear")
     try:
-        # Create a QRCode object with specified settings
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
             box_size=box_size,
             border=border,
         )
-        # Add data to the QR code
         qr.add_data(data)
-        # Optimize the QR code size
         qr.make(fit=True)
-        # Get terminal color codes for fill and background
         fill_color_code = terminal_color(fill_color)
         back_color_code = terminal_color(back_color, is_background=True)
         print(f"{fill_color_code}")
         print(f"{back_color_code}")
-        # Iterate over the QR code matrix to print it in the terminal
         for row in qr.get_matrix():
             for col in row:
                 if col:
-                    # Print filled cells with the specified fill color
                     print(f"{fill_color_code}██{terminal_color('reset')}", end="")
                 else:
-                    # Print empty cells with the specified background color
                     print(f"{back_color_code}  {terminal_color('reset')}", end="")
-            print()  # New line after each row
+            print()
 
-        # Indicate successful QR code generation
         print(
             colored(
                 "\nQR Code successfully displayed in the terminal. (If terminal QR is not working try after saving)",
                 "green",
             )
         )
-        return qr  # Return the QRCode object
+        return qr
     except Exception as e:
-        # Print an error message if QR code generation fails
         print(colored(f"An error occurred while generating the QR code: {e}", "red"))
         return None
 
 
 def save_qr_code(qr, data, fill_color="black", back_color="white"):
+    """
+    Saves the generated QR code as a PNG image file.
+
+    Args:
+        qr (qrcode.QRCode): The QRCode object to save.
+        data (str): The data encoded in the QR code, used for filename generation.
+        fill_color (str): The fill color of the QR code image.
+        back_color (str): The background color of the QR code image.
+    """
     try:
-        # Define the folder name for saving QR codes
         folder_name = "qr_codes"
-        # Create the folder if it doesn't exist
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
 
-        # Create a valid filename by replacing spaces and slashes
         filename = f"{folder_name}/{data.replace(' ', '_').replace('/', '_')[:50]}.png"
-        # Generate an image from the QRCode object
         img = qr.make_image(fill_color=fill_color, back_color=back_color)
-        # Save the image to the specified filename
         img.save(filename)
 
-        # Indicate successful saving of the QR code
         print(colored(f"QR Code saved as {filename}", "green"))
     except Exception as e:
         print(colored(f"An error occurred while saving the QR code: {e}", "red"))
 
 
 def input_qr_url():
+    """
+    Prompts the user to enter a URL for QR code generation and validates it.
+
+    Returns:
+        str: The validated URL, or None if the URL is invalid or empty.
+    """
     url = input(colored("\nEnter the url for the QR Code: ", "cyan")).strip()
     if not url:
-        raise ValueError("Input cannot be empty.")
-    if __name__ == "__main__":
-        return url
-    elif is_youtube_url(url):
+        print(colored("Input cannot be empty.", "red"))
+        time.sleep(1)
+        return None
+    if is_youtube_url(url):
         return url
     else:
         print(colored("Invalid URL. Please enter a valid YouTube URL.", "red"))
         time.sleep(1)
+        return None
 
 
 def default_qr(data):
+    """
+    Generates and optionally saves a QR code with default settings.
+
+    Args:
+        data (str): The data to encode in the QR code.
+    """
     try:
         os.system("cls" if os.name == "nt" else "clear")
-        # Prompt the user for data to encode in the QR code
         print(colored("\n--------------------------------\n", "yellow"))
         print(colored("Generating QR code with default settings...", "cyan"))
         qr = generate_qr_terminal(data)
@@ -152,8 +177,13 @@ def default_qr(data):
 
 
 def custom_qr(data):
+    """
+    Generates and optionally saves a QR code with custom fill and background colors.
+
+    Args:
+        data (str): The data to encode in the QR code.
+    """
     try:
-        # Prompt the user for data to encode in the QR code
         os.system("cls" if os.name == "nt" else "clear")
         print(colored("\n--------------------------------\n", "yellow"))
         print(colored("Custom QR Code Settings:", "cyan"))
@@ -206,14 +236,15 @@ def custom_qr(data):
 
 
 def joke_qr():
+    """
+    Fetches a random joke, generates a QR code for it, and optionally saves it.
+    """
     try:
         os.system("cls" if os.name == "nt" else "clear")
-        # Fetch a random joke and generate a QR code for it
         random_joke = fetch_random_joke()
         qr = generate_qr_terminal(random_joke)
 
         if qr:
-            # Ask the user if they want to save the QR code
             save_option = (
                 input(
                     colored(
@@ -229,11 +260,13 @@ def joke_qr():
             else:
                 print(colored("QR code not saved.", "red"))
     except Exception as e:
-        # Print an error message if an exception occurs
         print(colored(f"An error occurred: {e}", "red"))
 
 
 def qr_menu():
+    """
+    Displays the QR code generation menu and handles user choices.
+    """
     while True:
         print(colored("\n--------------------------------\n", "yellow"))
         print(colored("QR Menu:", "cyan"))
@@ -258,16 +291,17 @@ def qr_menu():
             joke_qr()
 
         elif choice == "4":
-            # Exit the program
             break
 
         else:
-            # Print an error message for invalid menu choices
             print(colored("Invalid choice... Try again", "red"))
             time.sleep(1)
 
 
 def main():
+    """
+    Main function to run the Terminal QR Code Generator application.
+    """
     print(
         colored(
             "Welcome to the Terminal QR Code Generator! (Suggestion: Open terminal in full screen)",

@@ -70,11 +70,25 @@ def flush_dns():
     print(colored("♻️ DNS cache flushed.", "cyan"))
 
 def yt_access_menu():
+    """
+    Displays the YouTube access control menu and handles user choices.
+    Requires administrator/root privileges to modify the hosts file.
+    """
     if not is_admin():
-        print(colored("⚠️ To access this feature. Please run this script as an administrator (Windows) or use sudo (macOS/Linux).", "yellow"))
+        print(colored("\n" + "="*50, "red"))
+        print(colored("⚠️  ADMINISTRATOR/ROOT PRIVILEGES REQUIRED  ⚠️", "red"))
+        print(colored("This feature modifies system files (hosts file) and requires elevated privileges.", "yellow"))
+        if OS_NAME == "Windows":
+            print(colored("Please run this script as an Administrator.", "yellow"))
+            print(colored("  - Right-click on the script/terminal icon and select 'Run as administrator'.", "yellow"))
+        else: # macOS/Linux
+            print(colored("Please run this script using 'sudo'.", "yellow"))
+            print(colored("  - Example: sudo python3 main.py", "yellow"))
+        print(colored("="*50 + "\n", "red"))
         return
     
-    choice = input(colored("Do you want to (1) Block or (2) Unblock YouTube? Enter 1 or 2: ", "cyan"))
+    print(colored("\nYouTube Access Control Menu:", "magenta"))
+    choice = input(colored("  Do you want to (1) Block or (2) Unblock YouTube? Enter 1 or 2: ", "cyan"))
     if choice == "1":
         block_youtube()
         flush_dns()
