@@ -5,12 +5,11 @@ from termcolor import colored
 
 
 def download_directory():
-    """Create a 'downloads' directory if it doesn't exist."""
-    path = input(
-        "Enter the path where you want to save the downloaded files (leave blank for the current directory): "
-    ).strip()
-    if not path:
-        path = os.getcwd()
+    """
+    Ensures a 'downloads' directory exists in the current working directory
+    and returns its path.
+    """
+    path = os.path.join(os.getcwd(), "downloads")
     if not os.path.exists(path):
         os.makedirs(path)
     return path

@@ -13,13 +13,24 @@ init()
 os.system('color')
 
 def check_internet_connection():
+    """
+    Checks for an active internet connection by attempting to connect to Google's DNS server.
+    Returns:
+        bool: True if connected, False otherwise.
+    """
     try:
+        # Attempt to create a connection to a known reliable host (Google's DNS server)
         create_connection(("8.8.8.8", 53), timeout=3)
         return True
     except OSError:
+        # If connection fails, an OSError is raised
         return False
 
 def song_menu():
+    """
+    Displays the song player menu and handles user choices for playing saved songs
+    or a new song from YouTube.
+    """
     try:
         while True:
             print(colored("\n--------------------------------\n", "yellow"))
@@ -28,13 +39,16 @@ def song_menu():
             print(colored("3. Exit", "green"))
             song_choice = input(colored("Enter your choice: ", "yellow"))
             if song_choice == "1":
+                # Navigate to the music library to manage and play saved songs
                 music_library()
             elif song_choice == "2":
+                # Prompt user for a YouTube URL to play audio
                 try:
                     input_url_for_audio()
                 except Exception as e:
                     print(colored(e, "red"))
             elif song_choice == "3":
+                # Exit the song menu
                 break
             else:
                 print(colored("Invalid choice", "red"))
@@ -43,15 +57,23 @@ def song_menu():
 
 
 def main():
+    """
+    Main function of the application. Displays the welcome banner, checks internet
+    connection, and presents the main menu for various YouTube-related tools.
+    """
+    # Display application title using pyfiglet
     text = "The Ultimate Youtube Tool"
     ascii_art = pyfiglet.figlet_format(text, font="standard")
     print(colored(ascii_art, "red"))
     print(colored("By: @SyedAbdul-Rehman", "cyan"), end="              ")
+    
+    # Check and display internet connection status
     status = "● Online" if check_internet_connection() else "● Offline"
     status_color = "green" if check_internet_connection() else "red"
     print(colored(f"Status: {status}", status_color))
     print(colored("Version: 1.0.0", "green"))
     
+    # Exit if no internet connection is detected
     if not check_internet_connection():
         print(
             colored(
@@ -63,6 +85,7 @@ def main():
         sys.exit()
 
     try:
+        # Main application loop
         while True:
             print(colored("--------------------------------\n", "yellow"))
             print(colored("Select an option:", "yellow"))
@@ -73,14 +96,19 @@ def main():
             print(colored("5. Exit", "green"))
             choice = input(colored("Enter your choice: ", "yellow"))
             if choice == "1":
+                # Open the song/audio player menu
                 song_menu()
             elif choice == "2":
+                # Open the video/audio downloader
                 input_url_for_video()
             elif choice == "3":
+                # Open the YouTube QR Code Generator
                 qr()
             elif choice == "4":
+                # Open the YouTube access control menu
                 yt_access()
             elif choice == "5":
+                # Exit the application
                 print(colored("Thank you for using The Ultimate Youtube Tool.", "blue"))
                 os.system("pause")
                 sys.exit()

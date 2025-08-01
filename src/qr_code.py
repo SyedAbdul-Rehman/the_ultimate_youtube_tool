@@ -313,5 +313,28 @@ def main():
 
 
 if __name__ == "__main__":
+    # Basic testing of QR code functions
+    print(colored("--- Testing QR Code Functions ---", "yellow"))
+
+    # Test default_qr with a YouTube URL
+    print(colored("\nTesting default_qr with a YouTube URL...", "cyan"))
+    default_qr("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+    time.sleep(2)
+
+    # Test custom_qr with a different URL (simulating user input for colors)
+    print(colored("\nTesting custom_qr with a custom URL (black fill, green background)...", "cyan"))
+    # For automated testing, we'll simulate the input for fill and back colors
+    # In a real scenario, this would require user interaction.
+    # For now, we'll hardcode colors for this test.
+    custom_qr("https://github.com/SyedAbdul-Rehman/the_ultimate_youtube_tool", fill_color="black", back_color="green")
+    time.sleep(2)
+
+    # Test joke_qr
+    print(colored("\nTesting joke_qr...", "cyan"))
+    joke_qr()
+    time.sleep(2)
+
+    print(colored("\n--- QR Code Function Tests Complete ---", "yellow"))
+
     # Run the main function if the script is executed directly
     main()

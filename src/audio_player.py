@@ -4,12 +4,16 @@ import vlc  # Import VLC for media playback
 import os  # Import os for clearing the console
 import re  # Import re for regular expression matching
 from termcolor import colored  # Add termcolor import
+from functools import lru_cache # Import lru_cache for caching
 
 
 # Function to fetch the audio URL of a YouTube video
+@lru_cache(maxsize=128) # Cache up to 128 most recent URLs
 def get_audio_url(youtube_url):
     """
     Fetches the direct audio URL of a YouTube video.
+    Uses lru_cache to store recently fetched URLs to improve performance on repeated requests.
+
     Args:
         youtube_url (str): The URL of the YouTube video.
     Returns:
