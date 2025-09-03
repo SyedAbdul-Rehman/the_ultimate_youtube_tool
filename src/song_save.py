@@ -152,10 +152,37 @@ def song_player_menu(songs):
             print(colored("Invalid input. Please enter a number.", "red"))
 
 
+def search_songs():
+    """
+    Searches for songs by name and displays matching results.
+    """
+    try:
+        songs = get_songs()
+        if not songs:
+            print(colored("No songs saved yet to search.", "yellow"))
+            return
+
+        search_term = input(colored("Enter song name to search: ", "green")).strip().lower()
+        if not search_term:
+            print(colored("Search term cannot be empty.", "red"))
+            return
+
+        matching_songs = [song for song in songs if search_term in song['name'].lower()]
+
+        if matching_songs:
+            print(colored(f"\nFound {len(matching_songs)} matching song(s):", "green"))
+            for i, song in enumerate(matching_songs, start=1):
+                print(colored(f"{i}. {song['name']} - {song['url']}", "cyan"))
+        else:
+            print(colored("No songs found matching your search.", "yellow"))
+    except Exception as e:
+        print(colored(f"An unexpected error occurred: {e}", "red"))
+
+
 def music_library():
     """
     Displays the main music library menu and handles user interactions
-    for saving, viewing, playing, removing, and editing songs.
+    for saving, viewing, playing, removing, editing, and searching songs.
     """
     while True:
         print(colored("\nMusic Library Menu:\n", "blue"))
@@ -163,8 +190,9 @@ def music_library():
         print(colored("2. Want to save a song", "cyan"))
         print(colored("3. View Saved Songs", "cyan"))
         print(colored("4. Remove Song", "cyan"))
-        print(colored("5. Edit Song Details", "cyan")) # New option
-        print(colored("6. Exit", "cyan"))
+        print(colored("5. Edit Song Details", "cyan"))
+        print(colored("6. Search Songs", "cyan"))  # New option
+        print(colored("7. Exit", "cyan"))
         choice = input(colored("Choose an option: ", "green"))
         if choice == "1":
             songs = get_songs()
@@ -178,9 +206,11 @@ def music_library():
             view_songs()
         elif choice == "4":
             remove_song()
-        elif choice == "5": # Handle new option
+        elif choice == "5":
             edit_song()
-        elif choice == "6":
+        elif choice == "6":  # Handle new option
+            search_songs()
+        elif choice == "7":
             break
         else:
             print(colored("Invalid option. Please choose again.", "red"))
