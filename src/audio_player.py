@@ -1,10 +1,11 @@
 import time  # Import time for sleep functionality
 import yt_dlp  # Import yt_dlp for downloading YouTube audio
 import vlc  # Import VLC for media playback
-import os  # Import os for clearing the console
+import os  # Import os for file operations
 import re  # Import re for regular expression matching
 from termcolor import colored  # Add termcolor import
 from functools import lru_cache # Import lru_cache for caching
+from utils import clear_screen  # Import clear_screen utility
 
 
 # Function to fetch the audio URL of a YouTube video
@@ -131,7 +132,7 @@ def list_of_songs():
     ]
     while True:
         try:
-            os.system("cls")  # Clear the screen
+            clear_screen()  # Clear the screen
             print("\n" + "_" * 30)
             print("\nList of songs:")
             print("\n1. Dil Tu Jaan Tu by Gurnazar Ft. Kritika Yadav")
@@ -193,7 +194,7 @@ def is_youtube_url(url):
 def main():
     while True:
         try:
-            os.system("cls")  # Clear the screen
+            clear_screen()  # Clear the screen
             print("\n" + "_" * 30)
             print("\n         Welcome to my music player!")
             print("\n1. Wanna play my list of songs?")
@@ -203,7 +204,7 @@ def main():
             if choice == 1:
                 list_of_songs()  # Show the list of pre-defined songs
             elif choice == 2:
-                os.system("cls")  # Clear the screen
+                clear_screen()  # Clear the screen
                 input_url_for_audio()  # Play the user's custom song
             elif choice == 3:
                 # Exit the program

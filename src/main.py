@@ -3,12 +3,13 @@ import sys
 import pyfiglet
 from socket import create_connection
 from termcolor import colored
-from song_save import music_library 
+from song_save import music_library
 from audio_player import input_url_for_audio
 from video_downloader import input_url_for_video
 from qr_code import qr_menu as qr
 from yt_access_control import yt_access_menu as yt_access
 from colorama import init
+from utils import clear_screen
 init()
 os.system('color')
 

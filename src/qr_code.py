@@ -5,6 +5,7 @@ import requests  # Import requests for making HTTP requests
 from audio_player import is_youtube_url
   # Import the is_youtube_url function from audio_player.py
 from termcolor import colored  # Import the colored function from termcolor for colored text output
+from utils import clear_screen  # Import clear_screen utility
 
 
 def terminal_color(color, is_background=False):
@@ -66,7 +67,7 @@ def generate_qr_terminal(
     Returns:
         qrcode.QRCode: The QRCode object if successful, None otherwise.
     """
-    os.system("cls" if os.name == "nt" else "clear")
+    clear_screen()
     try:
         qr = qrcode.QRCode(
             version=1,
@@ -152,7 +153,7 @@ def default_qr(data):
         data (str): The data to encode in the QR code.
     """
     try:
-        os.system("cls" if os.name == "nt" else "clear")
+        clear_screen()
         print(colored("\n--------------------------------\n", "yellow"))
         print(colored("Generating QR code with default settings...", "cyan"))
         qr = generate_qr_terminal(data)
@@ -184,7 +185,7 @@ def custom_qr(data):
         data (str): The data to encode in the QR code.
     """
     try:
-        os.system("cls" if os.name == "nt" else "clear")
+        clear_screen()
         print(colored("\n--------------------------------\n", "yellow"))
         print(colored("Custom QR Code Settings:", "cyan"))
         print("Available colors:")
@@ -208,7 +209,7 @@ def custom_qr(data):
             ).strip()
             or "white"
         )
-        os.system("cls" if os.name == "nt" else "clear")
+        clear_screen()
         print(colored("\nGenerating QR code with custom settings...", "cyan"))
         qr = generate_qr_terminal(
             data, box_size=1, border=1, fill_color=fill_color, back_color=back_color
@@ -240,7 +241,7 @@ def joke_qr():
     Fetches a random joke, generates a QR code for it, and optionally saves it.
     """
     try:
-        os.system("cls" if os.name == "nt" else "clear")
+        clear_screen()
         random_joke = fetch_random_joke()
         qr = generate_qr_terminal(random_joke)
 
