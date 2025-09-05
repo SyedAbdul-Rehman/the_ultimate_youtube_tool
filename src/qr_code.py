@@ -8,17 +8,27 @@ from termcolor import colored  # Import the colored function from termcolor for 
 from utils import clear_screen  # Import clear_screen utility
 
 
-def terminal_color(color, is_background=False):
+def terminal_color(color, is_background=False, style=None):
     """
-    Maps color names to ANSI escape codes for terminal output.
+    Maps color names and styles to ANSI escape codes for terminal output.
 
     Args:
         color (str): The name of the color (e.g., "black", "red").
         is_background (bool): True if the color is for the background, False for foreground.
+        style (str): Optional style ("bold", "underline").
 
     Returns:
-        str: The ANSI escape code for the specified color.
+        str: The ANSI escape code for the specified color and style.
     """
+    codes = []
+
+    # Add style codes
+    if style == "bold":
+        codes.append("1")
+    elif style == "underline":
+        codes.append("4")
+
+    # Add color code
     color_map = {
         "black": 40 if is_background else 30,
         "red": 41 if is_background else 31,
@@ -30,7 +40,9 @@ def terminal_color(color, is_background=False):
         "white": 47 if is_background else 37,
         "reset": 0,
     }
-    return f"\033[{color_map.get(color.lower(), 0)}m"
+    codes.append(str(color_map.get(color.lower(), 0)))
+
+    return f"\033[{';'.join(codes)}m"
 
 
 def fetch_random_joke():
