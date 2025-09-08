@@ -160,24 +160,3 @@ def input_url_for_video():
                 )
             )
             break
-
-
-def main():
-    print(
-        colored("\n\nWelcome to the YouTube Video Downloader!", "cyan", attrs=["bold"])
-    )
-    print(
-        colored(
-            "\nYou can download videos or audio files by providing their URLs.\n",
-            "cyan",
-        )
-    )
-
-    try:
-        input_url_for_video()
-    except KeyboardInterrupt:
-        print(colored("\n\nDownload canceled by the user.", "red"))
-
-
-if __name__ == "__main__":
-    main()

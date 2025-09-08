@@ -214,7 +214,3 @@ def music_library():
             break
         else:
             print(colored("Invalid option. Please choose again.", "red"))
-
-
-if __name__ == "__main__":
-    main()
