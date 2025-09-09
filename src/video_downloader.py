@@ -16,7 +16,15 @@ def download_directory():
 
 
 def get_url(url):
-    """Fetch YouTube video information."""
+    """
+    Fetches YouTube video information using yt-dlp.
+
+    Args:
+        url (str): The YouTube video URL.
+
+    Returns:
+        dict: Video information dictionary, or None if fetching fails.
+    """
     try:
         ydl_opts = {"quiet": True}
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -38,8 +46,16 @@ def get_url(url):
 
 
 def display_streams(url):
+    """
+    Displays available video/audio formats for the given YouTube URL.
+
+    Args:
+        url (str): The YouTube video URL.
+
+    Returns:
+        dict: Dictionary of format IDs to descriptions, or None if fetching fails.
+    """
     try:
-        """Display available streams for selection."""
         print(colored("\nFetching available formats...\n", "cyan"))
         options = {
             "listformats": False,  # Disable format listing
@@ -71,9 +87,15 @@ def display_streams(url):
         return None
 
 
-# def download_stream(selected_format, path):
 def download_stream(url, format_id, path):
-    """Download the selected stream."""
+    """
+    Downloads the selected video/audio stream to the specified path.
+
+    Args:
+        url (str): The YouTube video URL.
+        format_id (str): The format ID to download.
+        path (str): The directory path to save the file.
+    """
     print(colored("\nDownloading...", "yellow"))
     try:
         ydl_opts = {
@@ -91,7 +113,10 @@ def download_stream(url, format_id, path):
 
 
 def input_url_for_video():
-    """Get user input for video URL and format selection."""
+    """
+    Handles user input for YouTube video URLs and format selection for downloading.
+    Supports multiple URLs separated by commas.
+    """
     download_path = download_directory()
     print(colored(f"Files will be saved in: {download_path}", "cyan"))
     while True:
