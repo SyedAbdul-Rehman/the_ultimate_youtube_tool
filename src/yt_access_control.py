@@ -78,13 +78,21 @@ def yt_access_menu():
         print(colored("\n" + "="*50, "red"))
         print(colored("⚠️  ADMINISTRATOR/ROOT PRIVILEGES REQUIRED  ⚠️", "red"))
         print(colored("This feature modifies system files (hosts file) and requires elevated privileges.", "yellow"))
+        print(colored("\nTo run with elevated privileges:", "cyan"))
         if OS_NAME == "Windows":
-            print(colored("Please run this script as an Administrator.", "yellow"))
-            print(colored("  - Right-click on the script/terminal icon and select 'Run as administrator'.", "yellow"))
-        else: # macOS/Linux
-            print(colored("Please run this script using 'sudo'.", "yellow"))
-            print(colored("  - Example: sudo python3 main.py", "yellow"))
+            print(colored("  • Right-click on the script/terminal icon", "white"))
+            print(colored("  • Select 'Run as administrator'", "white"))
+            print(colored("  • Re-run the application", "white"))
+        else:  # macOS/Linux
+            print(colored("  • Use 'sudo' command: sudo python3 main.py", "white"))
+            print(colored("  • Or: sudo python main.py", "white"))
+        print(colored("\nAlternatively, you can continue without this feature.", "green"))
         print(colored("="*50 + "\n", "red"))
+
+        choice = input(colored("Press Enter to return to main menu, or 'r' to retry: ", "yellow")).strip().lower()
+        if choice == 'r':
+            # Allow user to retry (though this won't actually elevate privileges)
+            print(colored("Please restart the application with elevated privileges.", "yellow"))
         return
     
     print(colored("\nYouTube Access Control Menu:", "magenta"))
