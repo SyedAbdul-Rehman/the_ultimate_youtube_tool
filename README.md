@@ -78,7 +78,7 @@ Follow the interactive menu to:
   - pyfiglet
   - termcolor
   - yt-dlp
-  - vlc
+  - python-vlc
   - qrcode
   - requests
 

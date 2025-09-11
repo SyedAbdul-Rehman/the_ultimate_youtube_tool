@@ -1,11 +1,11 @@
-import time  # Import time for sleep functionality
-import yt_dlp  # Import yt_dlp for downloading YouTube audio
-import vlc  # Import VLC for media playback
-import os  # Import os for file operations
-import re  # Import re for regular expression matching
-from termcolor import colored  # Add termcolor import
-from functools import lru_cache # Import lru_cache for caching
-from utils import clear_screen  # Import clear_screen utility
+import os
+import re
+import time
+import vlc
+import yt_dlp
+from functools import lru_cache
+from termcolor import colored
+from utils import clear_screen
 
 
 # Function to fetch the audio URL of a YouTube video
