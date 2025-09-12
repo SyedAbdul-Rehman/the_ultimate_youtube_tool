@@ -1,16 +1,18 @@
 import time
-import qrcode  # Import the qrcode library for generating QR codes
-import os  # Import os for file and directory operations
-import requests  # Import requests for making HTTP requests
+import qrcode
+import os
+import requests
+from functools import lru_cache
 from audio_player import is_youtube_url
-  # Import the is_youtube_url function from audio_player.py
-from termcolor import colored  # Import the colored function from termcolor for colored text output
-from utils import clear_screen  # Import clear_screen utility
+from termcolor import colored
+from utils import clear_screen
 
 
+@lru_cache(maxsize=128)
 def terminal_color(color, is_background=False, style=None):
     """
     Maps color names and styles to ANSI escape codes for terminal output.
+    Results are cached for improved performance.
 
     Args:
         color (str): The name of the color (e.g., "black", "red").
@@ -45,16 +47,18 @@ def terminal_color(color, is_background=False, style=None):
     return f"\033[{';'.join(codes)}m"
 
 
+@lru_cache(maxsize=32)
 def fetch_random_joke():
     """
     Fetches a random joke from the icanhazdadjoke.com API.
+    Results are cached to avoid repeated API calls.
 
     Returns:
         str: A random joke, or a default joke if fetching fails.
     """
     try:
         headers = {"Accept": "application/json"}
-        response = requests.get("https://icanhazdadjoke.com/", headers=headers)
+        response = requests.get("https://icanhazdadjoke.com/", headers=headers, timeout=5)
         response.raise_for_status()
         data = response.json()
         return data.get("joke", "No joke found.")
@@ -82,23 +86,30 @@ def generate_qr_terminal(
     clear_screen()
     try:
         qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            version=None,  # Auto-select optimal version
+            error_correction=qrcode.constants.ERROR_CORRECT_M,  # Better balance of size/speed
             box_size=box_size,
             border=border,
         )
         qr.add_data(data)
         qr.make(fit=True)
+
+        # Pre-compute color codes for better performance
         fill_color_code = terminal_color(fill_color)
         back_color_code = terminal_color(back_color, is_background=True)
+        reset_code = terminal_color("reset")
+
         print(f"{fill_color_code}")
         print(f"{back_color_code}")
-        for row in qr.get_matrix():
+
+        # Build the QR matrix display more efficiently
+        matrix = qr.get_matrix()
+        for row in matrix:
             for col in row:
                 if col:
-                    print(f"{fill_color_code}██{terminal_color('reset')}", end="")
+                    print(f"{fill_color_code}██{reset_code}", end="")
                 else:
-                    print(f"{back_color_code}  {terminal_color('reset')}", end="")
+                    print(f"{back_color_code}  {reset_code}", end="")
             print()
 
         print(

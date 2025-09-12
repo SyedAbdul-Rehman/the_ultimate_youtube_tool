@@ -1,6 +1,7 @@
 # from pytube import YouTube      # for downloading YouTube videos
 import yt_dlp
 import os  # for managing file paths
+import re  # for regular expression matching
 from termcolor import colored
 
 
@@ -112,6 +113,22 @@ def download_stream(url, format_id, path):
         print(colored("Please check the selected format ID or your network connection.", "yellow"))
 
 
+def is_youtube_url(url):
+    """
+    Validates if the given URL is a valid YouTube URL.
+
+    Args:
+        url (str): The URL to validate.
+
+    Returns:
+        bool: True if the URL is a valid YouTube URL, False otherwise.
+    """
+    youtube_pattern1 = r"^https?://(?:www\.)?(?:youtube\.com|youtu\.be)/.*$"
+    youtube_pattern2 = r"^https?://(www\.)?youtube\.com/playlist\?list=.*$"
+    youtube_pattern = youtube_pattern1 + "|" + youtube_pattern2
+    return bool(re.match(youtube_pattern, url))
+
+
 def input_url_for_video():
     """
     Handles user input for YouTube video URLs and format selection for downloading.
@@ -132,6 +149,12 @@ def input_url_for_video():
             continue
 
         for url in urls:
+            # Validate URL format before processing
+            if not is_youtube_url(url):
+                print(colored(f"Invalid YouTube URL format: {url}", "red"))
+                print(colored("Please enter valid YouTube URLs (youtube.com or youtu.be).", "yellow"))
+                continue
+
             print(colored(f"\nProcessing URL: {url}", "cyan"))
 
             # Fetch video information
