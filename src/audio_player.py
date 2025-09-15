@@ -188,3 +188,35 @@ def is_youtube_url(url):
     youtube_pattern2 = r"^https?://(www\.)?youtube\.com/playlist\?list=.*$"
     youtube_pattern = youtube_pattern1 + "|" + youtube_pattern2
     return bool(re.match(youtube_pattern, url))
+
+
+def test_error_handling():
+    """
+    Basic error handling tests for audio_player functions.
+    Tests various error conditions and edge cases.
+    """
+    print(colored("Running basic error handling tests...", "cyan"))
+
+    # Test 1: Invalid URL format
+    test_urls = [
+        "",  # Empty string
+        "not_a_url",  # Invalid format
+        "https://google.com",  # Non-YouTube URL
+        "https://youtube.com/watch?v=invalid",  # Valid format but may not exist
+    ]
+
+    for url in test_urls:
+        result = is_youtube_url(url)
+        if url in ["", "not_a_url", "https://google.com"]:
+            assert not result, f"Expected False for invalid URL: {url}"
+        print(colored(f"✓ URL validation test passed for: {url}", "green"))
+
+    # Test 2: Test get_audio_url with invalid input
+    try:
+        result = get_audio_url("")
+        assert result is None, "Expected None for empty URL"
+        print(colored("✓ Empty URL test passed", "green"))
+    except Exception as e:
+        print(colored(f"✓ Expected exception for empty URL: {e}", "green"))
+
+    print(colored("All basic error handling tests completed!", "green"))

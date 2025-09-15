@@ -184,33 +184,28 @@ def music_library():
     Displays the main music library menu and handles user interactions
     for saving, viewing, playing, removing, editing, and searching songs.
     """
+    menu_options = {
+        "1": ("List of songs to play", lambda: song_player_menu(get_songs()) if get_songs() else print(colored("No songs saved yet.", "yellow"))),
+        "2": ("Want to save a song", save_song),
+        "3": ("View Saved Songs", view_songs),
+        "4": ("Remove Song", remove_song),
+        "5": ("Edit Song Details", edit_song),
+        "6": ("Search Songs", search_songs),
+        "7": ("Exit", lambda: "exit")
+    }
+
     while True:
         print(colored("\nMusic Library Menu:\n", "blue"))
-        print(colored("1. List of songs to play", "cyan"))
-        print(colored("2. Want to save a song", "cyan"))
-        print(colored("3. View Saved Songs", "cyan"))
-        print(colored("4. Remove Song", "cyan"))
-        print(colored("5. Edit Song Details", "cyan"))
-        print(colored("6. Search Songs", "cyan"))  # New option
-        print(colored("7. Exit", "cyan"))
-        choice = input(colored("Choose an option: ", "green"))
-        if choice == "1":
-            songs = get_songs()
-            if songs:
-                song_player_menu(songs)
-            else:
-                print(colored("No songs saved yet.", "yellow"))
-        elif choice == "2":
-            save_song()
-        elif choice == "3":
-            view_songs()
-        elif choice == "4":
-            remove_song()
-        elif choice == "5":
-            edit_song()
-        elif choice == "6":  # Handle new option
-            search_songs()
-        elif choice == "7":
-            break
+        for key, (description, _) in menu_options.items():
+            print(colored(f"{key}. {description}", "cyan"))
+
+        choice = input(colored("Choose an option: ", "green")).strip()
+
+        if choice in menu_options:
+            action = menu_options[choice][1]
+            if choice == "7":  # Exit option
+                break
+            elif callable(action):
+                action()
         else:
             print(colored("Invalid option. Please choose again.", "red"))
