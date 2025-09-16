@@ -12,15 +12,31 @@ from utils import clear_screen
 def terminal_color(color, is_background=False, style=None):
     """
     Maps color names and styles to ANSI escape codes for terminal output.
-    Results are cached for improved performance.
+
+    This function provides a comprehensive color mapping system for terminal
+    text styling, supporting both foreground and background colors with optional
+    text styles. Results are cached for improved performance in QR code generation.
 
     Args:
-        color (str): The name of the color (e.g., "black", "red").
-        is_background (bool): True if the color is for the background, False for foreground.
-        style (str): Optional style ("bold", "underline").
+        color (str): The name of the color. Supported colors:
+            - Basic: "black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"
+            - Special: "reset" (resets all formatting)
+        is_background (bool, optional): If True, applies color to background.
+            Defaults to False (foreground).
+        style (str, optional): Text style modifier. Supported styles:
+            - "bold": Makes text bold
+            - "underline": Underlines text
 
     Returns:
-        str: The ANSI escape code for the specified color and style.
+        str: ANSI escape code sequence for the specified color and style.
+
+    Examples:
+        >>> terminal_color("red")
+        '\\x1b[31m'
+        >>> terminal_color("blue", is_background=True)
+        '\\x1b[44m'
+        >>> terminal_color("green", style="bold")
+        '\\x1b[1;32m'
     """
     codes = []
 

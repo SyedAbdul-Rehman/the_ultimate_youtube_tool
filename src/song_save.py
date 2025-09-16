@@ -179,10 +179,110 @@ def search_songs():
         print(colored(f"An unexpected error occurred: {e}", "red"))
 
 
+def create_playlist():
+    """
+    Creates a new playlist by selecting songs from the saved songs list.
+    """
+    songs = get_songs()
+    if not songs:
+        print(colored("No songs saved yet to create a playlist.", "yellow"))
+        return
+
+    playlist_name = input(colored("Enter playlist name: ", "green")).strip()
+    if not playlist_name:
+        print(colored("Playlist name cannot be empty.", "red"))
+        return
+
+    print(colored("Select songs for the playlist (enter numbers separated by commas):", "cyan"))
+    for i, song in enumerate(songs, start=1):
+        print(colored(f"{i}. {song['name']}", "cyan"))
+
+    try:
+        selections = input(colored("Enter song numbers: ", "green")).strip()
+        if not selections:
+            print(colored("No songs selected.", "red"))
+            return
+
+        song_indices = [int(x.strip()) - 1 for x in selections.split(",")]
+        playlist_songs = []
+
+        for idx in song_indices:
+            if 0 <= idx < len(songs):
+                playlist_songs.append(songs[idx])
+            else:
+                print(colored(f"Invalid song number: {idx + 1}", "red"))
+                return
+
+        # Save playlist to a separate file
+        playlists = get_playlists()
+        playlists[playlist_name] = playlist_songs
+
+        with open("playlists.json", "w") as f:
+            json.dump(playlists, f, indent=4)
+
+        print(colored(f"Playlist '{playlist_name}' created successfully!", "blue"))
+
+    except ValueError:
+        print(colored("Invalid input. Please enter numbers separated by commas.", "red"))
+
+
+def get_playlists():
+    """
+    Loads playlists from the playlists.json file.
+    """
+    try:
+        with open("playlists.json", "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+
+
+def view_playlists():
+    """
+    Displays all saved playlists.
+    """
+    playlists = get_playlists()
+    if not playlists:
+        print(colored("No playlists created yet.", "yellow"))
+        return
+
+    print(colored("Saved Playlists:", "red"))
+    for i, playlist_name in enumerate(playlists.keys(), start=1):
+        song_count = len(playlists[playlist_name])
+        print(colored(f"{i}. {playlist_name} ({song_count} songs)", "cyan"))
+
+
+def play_playlist():
+    """
+    Allows user to select and play a playlist.
+    """
+    playlists = get_playlists()
+    if not playlists:
+        print(colored("No playlists available.", "yellow"))
+        return
+
+    view_playlists()
+
+    try:
+        choice = int(input(colored("Enter playlist number to play: ", "green")))
+        playlist_names = list(playlists.keys())
+
+        if 1 <= choice <= len(playlist_names):
+            selected_playlist = playlist_names[choice - 1]
+            songs = playlists[selected_playlist]
+            print(colored(f"\nPlaying playlist: {selected_playlist}", "green"))
+            song_player_menu(songs)
+        else:
+            print(colored("Invalid playlist number.", "red"))
+
+    except ValueError:
+        print(colored("Invalid input. Please enter a number.", "red"))
+
+
 def music_library():
     """
     Displays the main music library menu and handles user interactions
-    for saving, viewing, playing, removing, editing, and searching songs.
+    for saving, viewing, playing, removing, editing, searching songs, and managing playlists.
     """
     menu_options = {
         "1": ("List of songs to play", lambda: song_player_menu(get_songs()) if get_songs() else print(colored("No songs saved yet.", "yellow"))),
@@ -191,7 +291,10 @@ def music_library():
         "4": ("Remove Song", remove_song),
         "5": ("Edit Song Details", edit_song),
         "6": ("Search Songs", search_songs),
-        "7": ("Exit", lambda: "exit")
+        "7": ("Create Playlist", create_playlist),
+        "8": ("View Playlists", view_playlists),
+        "9": ("Play Playlist", play_playlist),
+        "10": ("Exit", lambda: "exit")
     }
 
     while True:
@@ -203,7 +306,7 @@ def music_library():
 
         if choice in menu_options:
             action = menu_options[choice][1]
-            if choice == "7":  # Exit option
+            if choice == "10":  # Exit option
                 break
             elif callable(action):
                 action()
