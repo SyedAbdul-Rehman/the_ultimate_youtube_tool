@@ -1,11 +1,12 @@
 import json
 import audio_player as ap
 from termcolor import colored
+from constants import SONGS_FILE, PLAYLISTS_FILE, SUCCESS_SONG_SAVED, SUCCESS_SONG_UPDATED, SUCCESS_SONG_REMOVED
 
 
 def get_songs():
     try:
-        with open("songs.json", "r") as file:
+        with open(SONGS_FILE, "r") as file:
             return json.load(file)
     except FileNotFoundError:
         return []
@@ -14,7 +15,7 @@ def get_songs():
 def save_song():
     user_data = []
     try:
-        with open("songs.json", "r") as f:
+        with open(SONGS_FILE, "r") as f:
             user_data = json.load(f)
     except FileNotFoundError:
         pass
@@ -27,16 +28,16 @@ def save_song():
     if ap.is_youtube_url(url):
         song = {"name": name, "url": url}
         user_data.append(song)
-        with open("songs.json", "w") as f:
+        with open(SONGS_FILE, "w") as f:
             json.dump(user_data, f, indent=4)
-            print(colored("Song saved successfully!", "blue"))
+            print(colored(SUCCESS_SONG_SAVED, "blue"))
     else:
         print(colored("Enter a Valid Youtube URL..", "red"))
 
 
 def view_songs():
     try:
-        with open("songs.json", "r") as file:
+        with open(SONGS_FILE, "r") as file:
             songs = json.load(file)
             print(colored("Saved Songs:", "red"))
             for i, song in enumerate(songs, start=1):
@@ -64,9 +65,9 @@ def remove_song():
         )
         if 1 <= song_number <= len(songs):
             del songs[song_number - 1]
-            with open("songs.json", "w") as f:
+            with open(SONGS_FILE, "w") as f:
                 json.dump(songs, f, indent=4)
-            print(colored("Song removed successfully!", "blue"))
+            print(colored(SUCCESS_SONG_REMOVED, "blue"))
         else:
             print(colored("Invalid song number", "red"))
     except ValueError:
@@ -108,9 +109,9 @@ def edit_song():
 
             if ap.is_youtube_url(new_url):
                 songs[song_number - 1] = {"name": new_name, "url": new_url}
-                with open("songs.json", "w") as f:
+                with open(SONGS_FILE, "w") as f:
                     json.dump(songs, f, indent=4)
-                print(colored("Song updated successfully!", "blue"))
+                print(colored(SUCCESS_SONG_UPDATED, "blue"))
             else:
                 print(colored("Invalid YouTube URL. Song not updated.", "red"))
         else:
@@ -217,7 +218,7 @@ def create_playlist():
         playlists = get_playlists()
         playlists[playlist_name] = playlist_songs
 
-        with open("playlists.json", "w") as f:
+        with open(PLAYLISTS_FILE, "w") as f:
             json.dump(playlists, f, indent=4)
 
         print(colored(f"Playlist '{playlist_name}' created successfully!", "blue"))
@@ -231,7 +232,7 @@ def get_playlists():
     Loads playlists from the playlists.json file.
     """
     try:
-        with open("playlists.json", "r") as file:
+        with open(PLAYLISTS_FILE, "r") as file:
             return json.load(file)
     except FileNotFoundError:
         return {}

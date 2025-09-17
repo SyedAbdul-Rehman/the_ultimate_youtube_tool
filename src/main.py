@@ -3,13 +3,15 @@ import sys
 import pyfiglet
 from socket import create_connection
 from termcolor import colored
+from colorama import init
 from song_save import music_library
 from audio_player import input_url_for_audio
 from video_downloader import input_url_for_video
 from qr_code import qr_menu as qr
 from yt_access_control import yt_access_menu as yt_access
-from colorama import init
 from utils import clear_screen
+from constants import APP_NAME, APP_VERSION, AUTHOR, ERROR_NO_INTERNET
+
 init()
 os.system('color')
 
@@ -63,25 +65,20 @@ def main():
     connection, and presents the main menu for various YouTube-related tools.
     """
     # Display application title using pyfiglet
-    text = "The Ultimate Youtube Tool"
+    text = APP_NAME
     ascii_art = pyfiglet.figlet_format(text, font="standard")
     print(colored(ascii_art, "red"))
-    print(colored("By: @SyedAbdul-Rehman", "cyan"), end="              ")
-    
+    print(colored(f"By: {AUTHOR}", "cyan"), end="              ")
+
     # Check and display internet connection status
     status = "● Online" if check_internet_connection() else "● Offline"
     status_color = "green" if check_internet_connection() else "red"
     print(colored(f"Status: {status}", status_color))
-    print(colored("Version: 1.0.0", "green"))
-    
+    print(colored(f"Version: {APP_VERSION}", "green"))
+
     # Exit if no internet connection is detected
     if not check_internet_connection():
-        print(
-            colored(
-                "No internet connection. Make sure you're conected with internet and then try again...",
-                "red",
-            )
-        )
+        print(colored(ERROR_NO_INTERNET, "red"))
         os.system("pause")
         sys.exit()
 
