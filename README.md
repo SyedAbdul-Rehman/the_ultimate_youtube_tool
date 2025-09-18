@@ -7,10 +7,13 @@ A versatile Python-based command-line tool that combines multiple YouTube functi
 ### 1. Song/Audio Player 🎵
 - Play saved songs from your local library
 - Stream songs directly from YouTube URLs
+- Create and manage custom playlists
 - Manage your music collection with advanced features:
   - Edit song details (name and URL)
   - Search songs by name
   - Add/remove songs from your library
+  - Create custom playlists from saved songs
+  - Play entire playlists
 
 ### 2. Video/Audio Downloader 💽
 - Download videos from YouTube
@@ -59,17 +62,27 @@ Follow the interactive menu to:
 ### Song/Audio Player
 - Browse and play your saved music collection
 - Stream YouTube audio without downloading
-- User-friendly menu interface
+- Create and manage custom playlists
+- Advanced music library management with search and edit capabilities
+- User-friendly menu interface with improved navigation
 
 ### Video/Audio Downloader
-- High-quality video downloads
+- High-quality video downloads with format selection
 - Audio extraction capability
-- Multiple format support
+- Input validation for YouTube URLs
+- Multiple format support with error handling
 
 ### QR Code Generator
 - Convert YouTube URLs to QR codes
-- Easy sharing functionality
-- Mobile-friendly access
+- Optimized performance with caching
+- Customizable colors and styles
+- Generate QR codes for jokes and fun content
+- Easy sharing functionality and mobile-friendly access
+
+### YouTube Access Control
+- Block or unblock YouTube access system-wide
+- Administrator privileges with clear instructions
+- DNS cache flushing for immediate effect
 
 ## Requirements 📝
 - Python 3.x
