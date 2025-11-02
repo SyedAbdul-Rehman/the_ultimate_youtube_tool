@@ -37,8 +37,8 @@ A versatile Python-based command-line tool that combines multiple YouTube functi
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/YourUsername/Ultimate_Youtube_Tool.git
-cd Ultimate_Youtube_Tool
+git clone https://github.com/SyedAbdul-Rehman/the_ultimate_youtube_tool.git
+cd the_ultimate_youtube_tool
 ```
 
 ### 2. Install required dependencies
