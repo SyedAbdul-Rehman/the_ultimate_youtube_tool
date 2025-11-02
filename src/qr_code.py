@@ -7,6 +7,10 @@ from audio_player import is_youtube_url
 from termcolor import colored
 from utils import clear_screen
 
+# Environment variables for API configuration
+JOKE_API_URL = os.getenv("JOKE_API_URL", "https://icanhazdadjoke.com/")
+JOKE_API_TIMEOUT = int(os.getenv("JOKE_API_TIMEOUT", "5"))
+
 
 @lru_cache(maxsize=128)
 def terminal_color(color, is_background=False, style=None):
@@ -66,15 +70,16 @@ def terminal_color(color, is_background=False, style=None):
 @lru_cache(maxsize=32)
 def fetch_random_joke():
     """
-    Fetches a random joke from the icanhazdadjoke.com API.
+    Fetches a random joke from the configured joke API.
     Results are cached to avoid repeated API calls.
+    Uses environment variables for API configuration.
 
     Returns:
         str: A random joke, or a default joke if fetching fails.
     """
     try:
         headers = {"Accept": "application/json"}
-        response = requests.get("https://icanhazdadjoke.com/", headers=headers, timeout=5)
+        response = requests.get(JOKE_API_URL, headers=headers, timeout=JOKE_API_TIMEOUT)
         response.raise_for_status()
         data = response.json()
         return data.get("joke", "No joke found.")
