@@ -46,6 +46,19 @@ cd Ultimate_Youtube_Tool
 pip install -r requirements.txt
 ```
 
+### 3. (Optional) Configure environment variables
+Copy the example environment file and customize it:
+```bash
+cp .env.example .env
+```
+
+Edit `.env` to configure API settings:
+```bash
+# Joke API Configuration
+JOKE_API_URL=https://icanhazdadjoke.com/
+JOKE_API_TIMEOUT=5
+```
+
 ## Usage 🔧
 Run the main script:
 ```bash
