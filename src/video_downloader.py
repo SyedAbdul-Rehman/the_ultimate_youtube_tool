@@ -32,7 +32,8 @@ def get_url(url):
             )
         return yt
     except Exception as e:
-        print(colored(f"Error fetching video info: {e}", "red"))
+        print(colored(f"Error fetching video information: {e}", "red"))
+        print(colored("Please check if the URL is valid and accessible.", "yellow"))
         return None
 
 
@@ -65,7 +66,8 @@ def display_streams(url):
         print(colored("\nFormat selection canceled by the user.", "red"))
         return None
     except Exception as e:
-        print(colored(f"Error fetching formats: {e}", "red"))
+        print(colored(f"Error fetching available formats: {e}", "red"))
+        print(colored("Please check the video URL or try again later.", "yellow"))
         return None
 
 
@@ -85,6 +87,7 @@ def download_stream(url, format_id, path):
         print(colored("\nDownload canceled by the user.", "red"))
     except Exception as e:
         print(colored(f"Download failed: {e}", "red"))
+        print(colored("Please check the selected format ID or your network connection.", "yellow"))
 
 
 def input_url_for_video():
@@ -109,7 +112,7 @@ def input_url_for_video():
             # Fetch video information
             yt = get_url(url)
             if not yt:
-                print(colored("Skipping invalid or inaccessible URL.", "red"))
+                print(colored("Skipping invalid or inaccessible URL. It might be private, deleted, or region-restricted.", "red"))
                 continue
 
             streams = display_streams(url)
