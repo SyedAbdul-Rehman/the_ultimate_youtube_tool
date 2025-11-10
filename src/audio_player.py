@@ -1,11 +1,13 @@
 import os
 import re
 import time
-import vlc
 import yt_dlp
 from functools import lru_cache
 from termcolor import colored
 from utils import clear_screen
+
+# Check if VLC is available (will be checked when needed)
+VLC_AVAILABLE = False
 
 
 # Function to fetch the audio URL of a YouTube video
@@ -57,6 +59,15 @@ def play_song(song):
     Args:
         song (str): The YouTube URL of the song to play.
     """
+    # Try to import VLC only when needed
+    try:
+        import vlc
+    except ImportError:
+        print(colored("VLC media player is not available. Cannot play audio.", "red"))
+        print(colored("Please install VLC media player and ensure python-vlc package is properly configured.", "yellow"))
+        time.sleep(3)
+        return
+
     try:
         print(colored("\nStarting the audio...", "green"))
         url = get_audio_url(song)  # Fetch the audio URL

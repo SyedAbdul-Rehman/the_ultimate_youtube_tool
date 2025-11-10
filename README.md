@@ -33,6 +33,30 @@ A versatile Python-based command-line tool that combines multiple YouTube functi
 - Administrator privileges required
 - DNS cache flushing for immediate effect
 
+## ⚠️ **CRITICAL REQUIREMENT: VLC Media Player**
+**🚨 This tool REQUIRES VLC Media Player 64-bit to be installed and configured for audio playback functionality!**
+
+**Before proceeding with installation, you MUST:**
+
+1. **Download and Install VLC Media Player 64-bit:**
+   - Official Download: [https://www.videolan.org/vlc/download-windows.html](https://www.videolan.org/vlc/download-windows.html)
+   - Direct 64-bit Download: [https://get.videolan.org/vlc/3.0.18/win64/vlc-3.0.18-win64.exe](https://get.videolan.org/vlc/3.0.18/win64/vlc-3.0.18-win64.exe)
+
+2. **Configure VLC Environment Variable Path:**
+   - **Windows 10/11:** 
+     - Open Control Panel → System → Advanced System Settings → Environment Variables
+     - Add VLC installation directory to PATH variable
+     - Default path: `C:\Program Files\VideoLAN\VLC\`
+   - **Windows 7/8:**
+     - Right-click "Computer" → Properties → Advanced System Settings → Environment Variables
+     - Add VLC path to system PATH variable
+
+3. **Verify VLC Installation:**
+   - Open Command Prompt
+   - Type `vlc --version` to verify it's accessible from command line
+   - If command not found, restart your terminal/command prompt
+
+**🎵 Without VLC Media Player, the audio player and song streaming features will NOT work!**
 ## Installation 💻
 
 ### 1. Clone the repository
@@ -98,15 +122,19 @@ Follow the interactive menu to:
 - DNS cache flushing for immediate effect
 
 ## Requirements 📝
+### System Requirements
+- **VLC Media Player 64-bit** (🔴 **ESSENTIAL** - Required for audio playback functionality)
 - Python 3.x
 - Internet connection
-- Required Python packages:
-  - pyfiglet
-  - termcolor
-  - yt-dlp
-  - python-vlc
-  - qrcode
-  - requests
+- Administrator privileges (for YouTube access control features)
+
+### Python Packages
+- pyfiglet
+- termcolor
+- yt-dlp
+- python-vlc (Python binding for VLC)
+- qrcode
+- requests
 
 ## Author ✍️
 **@SyedAbdul-Rehman**
