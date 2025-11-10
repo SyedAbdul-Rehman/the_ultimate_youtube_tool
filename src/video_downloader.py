@@ -27,7 +27,7 @@ def get_url(url):
         dict: Video information dictionary, or None if fetching fails.
     """
     try:
-        ydl_opts = {"quiet": True}
+        ydl_opts = {"quiet": True, "no_warnings": True}
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             yt = ydl.extract_info(url, download=False)
             print(colored(f"\nTitle: {yt['title']}", "cyan"))
@@ -102,6 +102,7 @@ def download_stream(url, format_id, path):
         ydl_opts = {
             "outtmpl": os.path.join(path, "%(title)s.%(ext)s"),
             "format": format_id,
+            "no_warnings": True,  # Suppress warnings during download
         }
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])

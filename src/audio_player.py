@@ -29,6 +29,7 @@ def get_audio_url(youtube_url):
         ydl_opts = {
             "format": "bestaudio/best",  # Fetch the best quality audio
             "quiet": True,  # Suppress verbose output
+            "no_warnings": True,  # Suppress warnings
             "extract_flat": True,  # Extract metadata without downloading
         }
         # Extract audio stream URL
@@ -69,6 +70,7 @@ def get_playlist_info(playlist_url):
         
         ydl_opts = {
             "quiet": True,
+            "no_warnings": True,  # Suppress warnings
             "extract_flat": True,  # Extract metadata without downloading
         }
         
