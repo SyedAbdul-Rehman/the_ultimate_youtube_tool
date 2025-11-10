@@ -253,9 +253,167 @@ def view_playlists():
         print(colored(f"{i}. {playlist_name} ({song_count} songs)", "cyan"))
 
 
+def play_saved_playlist_enhanced(playlist_name, songs):
+    """
+    Enhanced playlist player with automatic progression and next/previous controls.
+    
+    Args:
+        playlist_name (str): The name of the playlist.
+        songs (list): List of song dictionaries with 'name' and 'url' keys.
+    """
+    if not songs:
+        print(colored("This playlist is empty.", "red"))
+        return
+    
+    print(colored(f"\n=== PLAYING PLAYLIST: {playlist_name} ===", "green"))
+    print(colored(f"Total songs: {len(songs)}", "yellow"))
+    
+    current_index = 0
+    volume = 50
+    auto_next = True  # Automatically play next song when current ends
+    
+    while current_index < len(songs):
+        current_song = songs[current_index]
+        
+        print(colored(f"\n--- Playing {current_index + 1}/{len(songs)}: {current_song['name']} ---", "green"))
+        
+        try:
+            # Import VLC here to avoid issues if not available
+            try:
+                import vlc
+                import time
+            except ImportError:
+                print(colored("VLC media player is not available. Cannot play audio.", "red"))
+                print(colored("Please install VLC media player and ensure python-vlc package is properly configured.", "yellow"))
+                time.sleep(3)
+                return
+            
+            # Get audio URL using the existing function
+            audio_url = ap.get_audio_url(current_song['url'])
+            if not audio_url:
+                print(colored(f"Skipping {current_song['name']} - could not fetch audio", "red"))
+                current_index += 1
+                continue
+            
+            player = vlc.MediaPlayer(audio_url)
+            player.audio_set_volume(volume)
+            player.play()
+            
+            print(colored(f"Volume: {volume}%", "cyan"))
+            time.sleep(2)  # Give time for the song to start loading
+            
+            # Track if we need to continue to next song
+            playlist_ended = False
+            
+            # Main playlist control loop
+            while not playlist_ended:
+                # Check if song has ended (if auto_next is enabled)
+                if auto_next and player.get_length() > 0:
+                    current_time = player.get_time() / 1000.0  # Convert to seconds
+                    duration = player.get_length() / 1000.0  # Convert to seconds
+                    
+                    # If we're within 5 seconds of the end, prepare next song
+                    if current_time >= (duration - 5) and current_time < duration:
+                        print(colored("Song almost finished, preparing next song...", "yellow"))
+                        time.sleep(3)
+                        current_index += 1
+                        playlist_ended = True
+                        break
+                
+                # Display playlist-specific controls
+                auto_status = "ON" if auto_next else "OFF"
+                auto_color = "green" if auto_next else "red"
+                print(
+                    colored("\nPlaylist Controls: ", "yellow")
+                    + colored("[N] Next Song | ", "green")
+                    + colored("[P] Previous Song | ", "blue")
+                    + colored("[C] Pause/Resume | ", "cyan")
+                    + colored("[R] Restart Song | ", "magenta")
+                    + colored(f"[A] Auto Next: {auto_status} | ", auto_color)
+                    + colored("[V] Volume +/- | ", "cyan")
+                    + colored("[Q] Exit Playlist", "red")
+                )
+                
+                command = input(colored("Enter command: ", "yellow")).strip().lower()
+                
+                if command == "n":  # Next song
+                    current_index += 1
+                    playlist_ended = True
+                    player.stop()
+                    print(colored("Moving to next song.", "green"))
+                    break
+                    
+                elif command == "p":  # Previous song
+                    if current_index > 0:
+                        current_index -= 1
+                        playlist_ended = True
+                        player.stop()
+                        print(colored("Moving to previous song.", "blue"))
+                        break
+                    else:
+                        print(colored("Already at the first song.", "yellow"))
+                        
+                elif command == "c":  # Pause/Resume
+                    if player.is_playing():
+                        player.pause()
+                        print(colored("Music paused.", "yellow"))
+                    else:
+                        player.play()
+                        print(colored("Music resumed.", "green"))
+                        
+                elif command == "r":  # Restart current song
+                    player.stop()
+                    player.play()
+                    print(colored("Song restarted.", "magenta"))
+                    
+                elif command == "a":  # Toggle auto next
+                    auto_next = not auto_next
+                    if auto_next:
+                        print(colored("Auto next enabled. Will play next song automatically.", "green"))
+                    else:
+                        print(colored("Auto next disabled. You'll need to press N for next song.", "red"))
+                    
+                elif command == "v":  # Volume control
+                    print(colored(f"Current volume: {volume}%", "cyan"))
+                    vol_cmd = input(colored("Enter new volume (0-100) or press Enter to cancel: ", "yellow")).strip()
+                    if vol_cmd.isdigit():
+                        new_vol = int(vol_cmd)
+                        if 0 <= new_vol <= 100:
+                            volume = new_vol
+                            player.audio_set_volume(volume)
+                            print(colored(f"Volume set to {volume}%.", "cyan"))
+                        else:
+                            print(colored("Invalid volume level. Please enter a number between 0 and 100.", "red"))
+                    
+                elif command == "q":  # Exit playlist
+                    player.stop()
+                    print(colored("Exiting playlist.", "red"))
+                    return
+                    
+                else:
+                    print("Invalid command. Try again.")
+                
+                # Small delay to prevent excessive CPU usage
+                time.sleep(0.5)
+                
+        except Exception as e:
+            print(colored(f"Error playing {current_song['name']}: {e}", "red"))
+            current_index += 1
+            continue
+    
+    # Playlist finished
+    if current_index >= len(songs):
+        print(colored("\n=== Playlist completed! ===", "green"))
+        play_again = input(colored("Do you want to play the playlist again? (y/n): ", "yellow")).strip().lower()
+        if play_again == "y":
+            play_saved_playlist_enhanced(playlist_name, songs)  # Restart from beginning
+        else:
+            print(colored("Thank you for listening to the playlist!", "blue"))
+
+
 def play_playlist():
     """
-    Allows user to select and play a playlist.
+    Allows user to select and play a playlist with enhanced controls.
     """
     playlists = get_playlists()
     if not playlists:
@@ -272,12 +430,39 @@ def play_playlist():
             selected_playlist = playlist_names[choice - 1]
             songs = playlists[selected_playlist]
             print(colored(f"\nPlaying playlist: {selected_playlist}", "green"))
-            song_player_menu(songs)
+            
+            # Ask user if they want enhanced playlist mode
+            mode_choice = input(colored("Play with auto-progression? (y/n, default y): ", "cyan")).strip().lower()
+            
+            if mode_choice == "n":
+                # Use the original song selection mode
+                song_player_menu(songs)
+            else:
+                # Use enhanced playlist mode with auto-progression
+                play_saved_playlist_enhanced(selected_playlist, songs)
         else:
             print(colored("Invalid playlist number.", "red"))
 
     except ValueError:
         print(colored("Invalid input. Please enter a number.", "red"))
+
+
+def play_all_saved_songs_playlist():
+    """
+    Creates and plays a playlist of all saved songs with auto-progression.
+    """
+    all_songs = get_songs()
+    if not all_songs:
+        print(colored("No songs saved yet.", "yellow"))
+        return
+    
+    print(colored(f"\n=== ALL SAVED SONGS PLAYLIST ===", "green"))
+    print(colored(f"Total songs: {len(all_songs)}", "yellow"))
+    print(colored("This will play all your saved songs in sequence with auto-progression.", "cyan"))
+    
+    confirm = input(colored("Do you want to play all saved songs? (y/n): ", "green")).strip().lower()
+    if confirm == "y":
+        play_saved_playlist_enhanced("All Saved Songs", all_songs)
 
 
 def music_library():
@@ -295,7 +480,8 @@ def music_library():
         "7": ("Create Playlist", create_playlist),
         "8": ("View Playlists", view_playlists),
         "9": ("Play Playlist", play_playlist),
-        "10": ("Exit", lambda: "exit")
+        "10": ("Play All Saved Songs (Auto-Progression)", play_all_saved_songs_playlist),
+        "11": ("Exit", lambda: "exit")
     }
 
     while True:
@@ -307,7 +493,7 @@ def music_library():
 
         if choice in menu_options:
             action = menu_options[choice][1]
-            if choice == "10":  # Exit option
+            if choice == "11":  # Exit option
                 break
             elif callable(action):
                 action()

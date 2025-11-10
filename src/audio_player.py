@@ -52,6 +52,245 @@ def get_audio_url(youtube_url):
     return None
 
 
+# Function to get playlist information
+def get_playlist_info(playlist_url):
+    """
+    Fetches information about a YouTube playlist.
+    
+    Args:
+        playlist_url (str): The YouTube playlist URL.
+        
+    Returns:
+        dict: Playlist information including title and list of video URLs, or None if fetching fails.
+    """
+    try:
+        print(colored("\nFetching playlist information...", "cyan"))
+        print(colored("This may take a moment for large playlists...\n", "yellow"))
+        
+        ydl_opts = {
+            "quiet": True,
+            "extract_flat": True,  # Extract metadata without downloading
+        }
+        
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(playlist_url, download=False)
+            
+            playlist_info = {
+                "title": info.get("title", "Unknown Playlist"),
+                "uploader": info.get("uploader", "Unknown"),
+                "videos": []
+            }
+            
+            # Extract video information from the playlist
+            for entry in info.get("entries", []):
+                if entry and "id" in entry:
+                    video_url = f"https://youtu.be/{entry['id']}"
+                    video_info = {
+                        "title": entry.get("title", "Unknown Title"),
+                        "url": video_url,
+                        "duration": entry.get("duration", 0)
+                    }
+                    playlist_info["videos"].append(video_info)
+            
+            return playlist_info
+            
+    except Exception as e:
+        print(colored(f"Failed to fetch playlist information: {e}", "red"))
+        print(colored("Please check if the playlist URL is valid and accessible.", "yellow"))
+        return None
+
+
+# Function to get current playback time (in seconds)
+def get_current_time(player):
+    """Get current playback time in seconds."""
+    try:
+        return player.get_time() / 1000.0  # VLC returns time in milliseconds
+    except:
+        return 0
+
+
+# Function to get song duration (in seconds)
+def get_duration(player):
+    """Get current song duration in seconds."""
+    try:
+        return player.get_length() / 1000.0  # VLC returns length in milliseconds
+    except:
+        return 0
+
+
+# Function to play a playlist with automatic progression and navigation controls
+def play_playlist(playlist_url, start_index=0):
+    """
+    Plays a YouTube playlist with automatic next song progression and navigation controls.
+    
+    Args:
+        playlist_url (str): The YouTube playlist URL.
+        start_index (int): The index of the song to start playing from.
+    """
+    # Try to import VLC only when needed
+    try:
+        import vlc
+    except ImportError:
+        print(colored("VLC media player is not available. Cannot play audio.", "red"))
+        print(colored("Please install VLC media player and ensure python-vlc package is properly configured.", "yellow"))
+        time.sleep(3)
+        return
+    
+    # Get playlist information
+    playlist_info = get_playlist_info(playlist_url)
+    if not playlist_info:
+        return
+    
+    videos = playlist_info["videos"]
+    if not videos:
+        print(colored("No videos found in this playlist.", "red"))
+        return
+    
+    print(colored(f"\n=== PLAYLIST: {playlist_info['title']} ===", "green"))
+    print(colored(f"Total videos: {len(videos)}", "yellow"))
+    print(colored(f"Playlist by: {playlist_info['uploader']}", "cyan"))
+    
+    current_index = start_index
+    volume = 50
+    auto_next = True  # Automatically play next song when current ends
+    
+    while current_index < len(videos):
+        current_video = videos[current_index]
+        
+        print(colored(f"\n--- Playing {current_index + 1}/{len(videos)}: {current_video['title']} ---", "green"))
+        
+        # Get audio URL for current video
+        audio_url = get_audio_url(current_video['url'])
+        if not audio_url:
+            print(colored(f"Skipping {current_video['title']} - could not fetch audio", "red"))
+            current_index += 1
+            continue
+        
+        try:
+            player = vlc.MediaPlayer(audio_url)
+            player.audio_set_volume(volume)
+            player.play()
+            
+            print(colored(f"Volume: {volume}%", "cyan"))
+            print(colored("Loading next song...", "yellow"))
+            time.sleep(2)  # Give time for the song to start loading
+            
+            # Track if we need to continue to next song
+            playlist_ended = False
+            
+            # Main playlist control loop
+            while not playlist_ended:
+                # Check if song has ended (if auto_next is enabled)
+                if auto_next and get_duration(player) > 0:
+                    current_time = get_current_time(player)
+                    duration = get_duration(player)
+                    
+                    # If we're within 5 seconds of the end, prepare next song
+                    if current_time >= (duration - 5) and current_time < duration:
+                        print(colored("Song almost finished, preparing next song...", "yellow"))
+                        time.sleep(3)
+                        current_index += 1
+                        playlist_ended = True
+                        break
+                
+                # Display playlist-specific controls
+                auto_status = "ON" if auto_next else "OFF"
+                auto_color = "green" if auto_next else "red"
+                print(
+                    colored("\nPlaylist Controls: ", "yellow")
+                    + colored("[N] Next Song | ", "green")
+                    + colored("[P] Previous Song | ", "blue")
+                    + colored("[C] Pause/Resume | ", "cyan")
+                    + colored("[R] Restart Song | ", "magenta")
+                    + colored(f"[A] Auto Next: {auto_status} | ", auto_color)
+                    + colored("[V] Volume +/- | ", "cyan")
+                    + colored("[Q] Exit Playlist", "red")
+                )
+                
+                command = input(colored("Enter command: ", "yellow")).strip().lower()
+                
+                if command == "n":  # Next song
+                    current_index += 1
+                    playlist_ended = True
+                    player.stop()
+                    print(colored("Moving to next song.", "green"))
+                    break
+                    
+                elif command == "p":  # Previous song
+                    if current_index > 0:
+                        current_index -= 1
+                        playlist_ended = True
+                        player.stop()
+                        print(colored("Moving to previous song.", "blue"))
+                        break
+                    else:
+                        print(colored("Already at the first song.", "yellow"))
+                        
+                elif command == "c":  # Pause/Resume
+                    if player.is_playing():
+                        player.pause()
+                        print(colored("Music paused.", "yellow"))
+                    else:
+                        player.play()
+                        print(colored("Music resumed.", "green"))
+                        
+                elif command == "r":  # Restart current song
+                    player.stop()
+                    player.play()
+                    print(colored("Song restarted.", "magenta"))
+                    
+                elif command == "a":  # Toggle auto next
+                    auto_next = not auto_next
+                    if auto_next:
+                        print(colored("Auto next enabled. Will play next song automatically.", "green"))
+                    else:
+                        print(colored("Auto next disabled. You'll need to press N for next song.", "red"))
+                    
+                elif command == "v":  # Volume control
+                    print(colored(f"Current volume: {volume}%", "cyan"))
+                    vol_cmd = input(colored("Enter new volume (0-100) or press Enter to cancel: ", "yellow")).strip()
+                    if vol_cmd.isdigit():
+                        new_vol = int(vol_cmd)
+                        if 0 <= new_vol <= 100:
+                            volume = new_vol
+                            player.audio_set_volume(volume)
+                            print(colored(f"Volume set to {volume}%.", "cyan"))
+                        else:
+                            print(colored("Invalid volume level. Please enter a number between 0 and 100.", "red"))
+                    
+                elif command == "q":  # Exit playlist
+                    player.stop()
+                    print(colored("Exiting playlist.", "red"))
+                    return
+                    
+                else:
+                    print("Invalid command. Try again.")
+                
+                # Small delay to prevent excessive CPU usage
+                time.sleep(0.5)
+                
+        except Exception as e:
+            print(colored(f"Error playing {current_video['title']}: {e}", "red"))
+            current_index += 1
+            continue
+    
+    # Playlist finished
+    if current_index >= len(videos):
+        print(colored("\n=== Playlist completed! ===", "green"))
+        play_again = input(colored("Do you want to play the playlist again? (y/n): ", "yellow")).strip().lower()
+        if play_again == "y":
+            play_playlist(playlist_url, 0)  # Restart from beginning
+        else:
+            print(colored("Thank you for listening to the playlist!", "blue"))
+
+
+# Function to detect if URL is a playlist
+def is_youtube_playlist(url):
+    """Check if the URL is a YouTube playlist."""
+    playlist_pattern = r"^https?://(www\.)?youtube\.com/playlist\?list=.*$"
+    return bool(re.match(playlist_pattern, url))
+
+
 # Function to play a song with volume control
 def play_song(song):
     """
@@ -175,7 +414,7 @@ def list_of_songs():
             time.sleep(2)
 
 
-# Function to play a song
+# Function to play a song or playlist based on URL type
 def input_url_for_audio():
     while True:
         try:
@@ -185,7 +424,12 @@ def input_url_for_audio():
             if url.lower() == "exit":
                 break
             elif is_youtube_url(url):
-                play_song(url)
+                # Check if it's a playlist URL
+                if is_youtube_playlist(url):
+                    print(colored("🎵 YouTube playlist detected! Starting playlist playback...", "green"))
+                    play_playlist(url)
+                else:
+                    play_song(url)
             else:
                 print(colored("Invalid URL. Please enter a valid YouTube URL.", "red"))
                 time.sleep(1)

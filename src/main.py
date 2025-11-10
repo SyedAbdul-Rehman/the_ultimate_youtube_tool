@@ -71,7 +71,7 @@ def main():
     print(colored(f"By: {AUTHOR}", "cyan"), end="              ")
 
     # Check and display internet connection status
-    status = "● Online" if check_internet_connection() else "● Offline"
+    status = "ONLINE" if check_internet_connection() else "OFFLINE"
     status_color = "green" if check_internet_connection() else "red"
     print(colored(f"Status: {status}", status_color))
     print(colored(f"Version: {APP_VERSION}", "green"))
